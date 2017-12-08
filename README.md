@@ -23,3 +23,8 @@ I1209 00:34:09.513994 20145 solver.cpp:404]     Test net output #1: sim_loss = 0
 I1209 00:34:09.514001 20145 solver.cpp:404]     Test net output #2: softmax_loss = 10.4477 (* 0.7 = 7.3
 
 后面补上在youtube face 和MSCELEBv1上面的测试结果。
+
+
+
+deepid1:
+http://blog.csdn.net/real_myth/article/details/51241854
