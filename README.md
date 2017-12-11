@@ -8,6 +8,7 @@ Download the newest caffe git and merge this git code in, build it.
 reference:
 
 `DeepID2:`
+
 https://github.com/wjgaas/DeepID2
 
 http://www.miaoerduo.com/deep-learning/%E5%9F%BA%E4%BA%8Ecaffe%E7%9A%84deepid2%E5%AE%9E%E7%8E%B0%EF%BC%88%E4%B8%AD%EF%BC%89.html
@@ -17,3 +18,5 @@ http://www.miaoerduo.com/deep-learning/%E5%9F%BA%E4%BA%8Ecaffe%E7%9A%84deepid2%E
 http://blog.csdn.net/real_myth/article/details/51241854
 
 https://github.com/joyhuang9473/deepid-implementation
+
+https://github.com/hqli/face_recognition
