@@ -3,7 +3,7 @@ DeepID2 code and DeepID1 code base on caffe.
 Download the newest caffe git and merge this git code in, build it.
 
 
-2017/12/11  Add deepid1  train_test and deploy prototxt; Add deeid2 deploy prototxt; the trained model on MsCelebV1-Faces-Aligned will coming soon;
+2017/12/11  Add deepid1  train_test and deploy prototxt; Add deeid2 deploy prototxt; the trained model on MsCelebV1-Faces-Aligned will coming soon; I have tried the deepid2 train_test_prototxt on lfw-aligned dataset.
 
 reference:
 
