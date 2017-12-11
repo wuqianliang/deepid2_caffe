@@ -1,8 +1,8 @@
 
 net: "examples/deepid2/DeepID2_train_test.prototxt"
-test_iter: 1000
+test_iter: 500
 test_interval: 1000
-base_lr: 0.0001
+base_lr: 0.001
 lr_policy: "step"
 gamma: 0.1
 stepsize: 100000
