@@ -20,3 +20,8 @@ http://blog.csdn.net/real_myth/article/details/51241854
 https://github.com/joyhuang9473/deepid-implementation
 
 https://github.com/hqli/face_recognition
+
+
+`test trained model on lfw` 
+
+https://github.com/HolmesShuan/DeepID-I-Reimplement
