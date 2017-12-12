@@ -41,11 +41,11 @@ def set_to_csv_file(data_set, file_name):
 
 if __name__ == '__main__':
     if len(sys.argv) != 4:
-        print('Usage: python %s src_folder test_set_file train_set_file' % (sys.argv[0]))
+        print('Usage: python %s src_folder train_set_file test_set_file' % (sys.argv[0]))
         sys.exit()
     src_folder     = sys.argv[1]
-    test_set_file  = sys.argv[2]
-    train_set_file = sys.argv[3]
+    train_set_file  = sys.argv[2]
+    test_set_file = sys.argv[3]
     if not src_folder.endswith('/'):
         src_folder += '/'
     
