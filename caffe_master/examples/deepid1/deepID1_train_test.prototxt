@@ -269,12 +269,12 @@ layer {
   }
 
 }
-layer {
-  name: "relu6_1"
-  type: "ReLU"
-  bottom: "deepid_1"
-  top: "deepid_1"
-}
+#layer {
+#  name: "relu6_1"
+#  type: "ReLU"
+#  bottom: "deepid_1"
+#  top: "deepid_1"
+#}
 layer {
   name: "drop6_1"
   type:  "Dropout"
@@ -301,7 +301,7 @@ layer {
     decay_mult: 0
   }
   inner_product_param {
-    num_output: 30
+    num_output: 9953 #for ms-celeb-1m
     weight_filler {
       type: "gaussian"
       std: 0.01
