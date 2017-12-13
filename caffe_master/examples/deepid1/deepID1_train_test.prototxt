@@ -8,7 +8,7 @@ layer {
   data_param {
     source: "examples/deepid1/DeepID1_train_lmdb"
     backend:LMDB
-    batch_size: 128
+    batch_size: 64
   }
   transform_param {
      mean_file: "examples/deepid1/DeepID1_mean.proto"
@@ -25,7 +25,7 @@ layer {
   data_param {
     source: "examples/deepid1/DeepID1_test_lmdb"
     backend:LMDB
-    batch_size: 128
+    batch_size: 64
   }
   transform_param {
     mean_file: "examples/deepid1/DeepID1_mean.proto"
@@ -301,7 +301,7 @@ layer {
     decay_mult: 0
   }
   inner_product_param {
-    num_output: 9953 #for ms-celeb-1m
+    num_output: 120 #9953 #for ms-celeb-1m
     weight_filler {
       type: "gaussian"
       std: 0.01
