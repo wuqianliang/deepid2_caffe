@@ -18,11 +18,12 @@ def walk_through_folder_for_split(src_folder):
             img_path = people_folder+'/' + img_file
             people_imgs.append((img_path, label))
 
-        if len(people_imgs) < 25:
+        if len(people_imgs) < 10:
             continue
         random.shuffle(people_imgs)
-        test_set  += people_imgs[0:5]
-        train_set += people_imgs[5:25]
+        middle = int(len(people_imgs)*0.2)
+        test_set  += people_imgs[0:middle]
+        train_set += people_imgs[middle:len(people_imgs)]
 
         sys.stdout.write('\rdone: ' + str(label))
         sys.stdout.flush()

@@ -3,7 +3,7 @@
 set -e
 
 EXAMPLE=examples/deepid1
-DATA=data/ms-celeb-1m/MsCelebV1-Faces-Aligned-Parsed/ 
+DATA=data/lfw-aligned/ 
 TOOLS=build/tools
 
 RESIZE_HEIGHT=55
@@ -16,14 +16,14 @@ rm -rf $EXAMPLE/DeepID1_train_lmdb
 rm -rf $EXAMPLE/DeepID1_test_lmdb
 
 
-$TOOLS/convert_imageset \
+$TOOLS/convert_imageset --shuffle \
     --resize_height=$RESIZE_HEIGHT \
     --resize_width=$RESIZE_WIDTH \
     $DATA \
     $DATA/train.txt \
     $EXAMPLE/DeepID1_train_lmdb
 
-$TOOLS/convert_imageset \
+$TOOLS/convert_imageset --shuffle \
     --resize_height=$RESIZE_HEIGHT \
     --resize_width=$RESIZE_WIDTH \
     $DATA \
