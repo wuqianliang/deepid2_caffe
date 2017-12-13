@@ -1,16 +1,16 @@
 net: "examples/deepid1/deepID1_train_test.prototxt"
-test_iter: 500
-test_interval: 2000
+test_iter: 2
+test_interval: 100
 
-base_lr: 0.01
+base_lr: 0.001
 lr_policy: "step"
 gamma: 0.1
-stepsize:  100000
+stepsize:  1000
 momentum: 0.9
-weight_decay: 0.005
+weight_decay: 0.0005
 
-display: 200
-max_iter:  500000
+display: 100
+max_iter:  12000
 snapshot:  50000
 snapshot_prefix: "examples/deepid1/snapshot"
 solver_mode: GPU
