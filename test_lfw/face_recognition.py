@@ -26,6 +26,7 @@ def compare_pic(feature1, feature2):
 def get_feature(path, mean_blob):
     global net;
     X = read_image(path, mean_blob);
+    #print X
     # test_num = np.shape(X)[0];
     # print test_num;
     out = net.forward_all(data = X);
@@ -60,7 +61,7 @@ if __name__ == '__main__':
     mean_blob.ParseFromString(open(MEAN_FILE, 'rb').read());
     mean_npy = caffe.io.blobproto_to_array(mean_blob);
     
-    #print mean_npy.shape
+    print mean_npy.shape
     
     for thershold in np.arange(0.25, 0.35, 0.01):
         True_Positive = 0;

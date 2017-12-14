@@ -3,11 +3,11 @@
 set -e
 
 EXAMPLE=examples/deepid1
-DATA=data/lfw-aligned/ 
+DATA=data/MsCelebV1-Faces-Aligned-Parsed/
 TOOLS=build/tools
 
-RESIZE_HEIGHT=55
-RESIZE_WIDTH=47
+RESIZE_HEIGHT=96
+RESIZE_WIDTH=96
 
 echo "creating lmdb..."
 
@@ -32,7 +32,7 @@ $TOOLS/convert_imageset --shuffle \
 
 echo "compute image mean..."
 
-$TOOLS/compute_image_mean $EXAMPLE/DeepID1_train_lmdb \
+$TOOLS/compute_image_mean -backend=lmdb  $EXAMPLE/DeepID1_train_lmdb \
   $EXAMPLE/DeepID1_mean.proto
 
 echo "done..."

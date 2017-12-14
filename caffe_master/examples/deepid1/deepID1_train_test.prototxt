@@ -301,7 +301,7 @@ layer {
     decay_mult: 0
   }
   inner_product_param {
-    num_output: 120 #9953 #for ms-celeb-1m
+    num_output: 9953 #9953 #for ms-celeb-1m
     weight_filler {
       type: "gaussian"
       std: 0.01
