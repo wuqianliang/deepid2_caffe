@@ -10,7 +10,7 @@ Network Struncture:
 
 [DeepID 1](http://ethereon.github.io/netscope/#/gist/9c722a768245df54a98870de625ae36b)
 
-[DeepID 2](https://gist.github.com/wuqianliang/14b1822d42432194892a033b27ac8bf5)
+[DeepID 2](http://ethereon.github.io/netscope/#/gist/14b1822d42432194892a033b27ac8bf5)
 
 
 
