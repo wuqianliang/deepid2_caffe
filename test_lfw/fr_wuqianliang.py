@@ -558,7 +558,7 @@ def crop_align_cam():
     threshold = [0.6, 0.7, 0.7]
     factor = 0.709
     
-    caffe.set_mode_cpu()
+    caffe.set_mode_gpu()
     PNet = caffe.Net(caffe_model_path+"/det1.prototxt", caffe_model_path+"/det1.caffemodel", caffe.TEST)
     RNet = caffe.Net(caffe_model_path+"/det2.prototxt", caffe_model_path+"/det2.caffemodel", caffe.TEST)
     ONet = caffe.Net(caffe_model_path+"/det3.prototxt", caffe_model_path+"/det3.caffemodel", caffe.TEST)
@@ -592,28 +592,25 @@ def crop_align_cam():
                 break
 
 
-def crop_align_image(img):
+minsize = 20
 
-    minsize = 20
+caffe_model_path = "/media/arthur/work/smart_card_snd/deepid2_wuqianliang/deepid2_caffe.git/trunk/test_lfw/mtcnn_model"
 
-    caffe_model_path = "/media/arthur/work/smart_card_snd/deepid2_wuqianliang/deepid2_caffe.git/trunk/test_lfw/mtcnn_model"
-
-    threshold = [0.6, 0.7, 0.7]
-    factor = 0.709
+threshold = [0.6, 0.7, 0.7]
+factor = 0.709
     
-    caffe.set_mode_cpu()
-    PNet = caffe.Net(caffe_model_path+"/det1.prototxt", caffe_model_path+"/det1.caffemodel", caffe.TEST)
-    RNet = caffe.Net(caffe_model_path+"/det2.prototxt", caffe_model_path+"/det2.caffemodel", caffe.TEST)
-    ONet = caffe.Net(caffe_model_path+"/det3.prototxt", caffe_model_path+"/det3.caffemodel", caffe.TEST)
-    align = AlignDlib('/media/arthur/work/smart_card_snd/deepid2_wuqianliang/deepid2_caffe.git/trunk/test_lfw/shape_predictor_68_face_landmarks.dat')
-    cap = cv2.VideoCapture(0)
-    start = time()
+caffe.set_mode_gpu()
+PNet = caffe.Net(caffe_model_path+"/det1.prototxt", caffe_model_path+"/det1.caffemodel", caffe.TEST)
+RNet = caffe.Net(caffe_model_path+"/det2.prototxt", caffe_model_path+"/det2.caffemodel", caffe.TEST)
+ONet = caffe.Net(caffe_model_path+"/det3.prototxt", caffe_model_path+"/det3.caffemodel", caffe.TEST)
+align = AlignDlib('/media/arthur/work/smart_card_snd/deepid2_wuqianliang/deepid2_caffe.git/trunk/test_lfw/shape_predictor_68_face_landmarks.dat')
+def crop_align_image(img):
 
     img_matlab = img.copy()
     tmp = img_matlab[:,:,2].copy()
     img_matlab[:,:,2] = img_matlab[:,:,0]
     img_matlab[:,:,0] = tmp #BGR TO RGB
-        # check rgb position
+    # check rgb position
     tic()
     boundingboxes, points = detect_face(img_matlab, minsize, PNet, RNet, ONet, threshold, False, factor)
     toc()
@@ -630,9 +627,11 @@ def crop_align_image(img):
             landmarkIndices=AlignDlib.OUTER_EYES_AND_NOSE)
         return alignedFace
 
+    return None
 '''
 img = cv2.imread("/media/arthur/work/smart_card_snd/deepid2_wuqianliang/deepid2_caffe.git/trunk/test_lfw/15-FaceId-1.jpg")
 crop_image = crop_align_image(img)
 cv2.imshow("Image", crop_image)
 cv2.waitKey (0)  
+crop_align_cam()
 '''
