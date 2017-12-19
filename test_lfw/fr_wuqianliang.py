@@ -475,7 +475,7 @@ def detect_face(img, minsize, PNet, RNet, ONet, threshold, fastresize, factor):
     #####
     # 3 #
     #####
-    print "3:",total_boxes.shape
+#    print "3:",total_boxes.shape
 
     return total_boxes, points
 
@@ -526,7 +526,7 @@ def compare_pic(feature1, feature2):
 def get_feature(path, mean_blob):
     global net;
     X = read_image(path, mean_blob);
-    print X
+#    print X
     # test_num = np.shape(X)[0];
     # print test_num;
     out = net.forward_all(data = X);
@@ -549,11 +549,9 @@ def read_image(filepath, mean_blob):
 
     return X;
 
-def main():
+def crop_align_cam():
 
     minsize = 20
-
-
 
     caffe_model_path = "./mtcnn_model"
 
@@ -574,29 +572,67 @@ def main():
         tmp = img_matlab[:,:,2].copy()
         img_matlab[:,:,2] = img_matlab[:,:,0]
         img_matlab[:,:,0] = tmp #BGR TO RGB
-        print 'img_matlab shape',img_matlab.shape
         # check rgb position
         tic()
         boundingboxes, points = detect_face(img_matlab, minsize, PNet, RNet, ONet, threshold, False, factor)
-        print 'boundingboxes shape',len(boundingboxes)
         toc()
         
         for i in range(len(boundingboxes)):
-            #cv2.rectangle(im, (int(x1[i]), int(y1[i])), (int(x2[i]), int(y2[i])), (0,255,0), 1)
-            #cv2.rectangle(img, (int(boundingboxes[i][0]), int(boundingboxes[i][1])), (int(boundingboxes[i][2]), int(boundingboxes[i][3])), (0,255,0), 1)    
-            #cropped = img[int(boundingboxes[i][1]):int(boundingboxes[i][3]),int(boundingboxes[i][0]):int(boundingboxes[i][2]),:]
-            #cropped = cv2.resize(cropped, (96, 96), interpolation=cv2.INTER_CUBIC )
             left    =int(boundingboxes[i][0])
             top     =int(boundingboxes[i][1])
             right   =int(boundingboxes[i][2])
             bottom  =int(boundingboxes[i][3])
             alignedFace=align.align(
-                    96,
+                    96,   # 96x96x3
                     img_matlab,
                     dlib.rectangle(left,top,right,bottom),
                     landmarkIndices=AlignDlib.OUTER_EYES_AND_NOSE)
-            cv2.imshow('cropped and alignment detected face',alignedFace)
+            cv2.imshow('crop align face',alignedFace)
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
 
-main()
+
+def crop_align_image(img):
+
+    minsize = 20
+
+    caffe_model_path = "./mtcnn_model"
+
+    threshold = [0.6, 0.7, 0.7]
+    factor = 0.709
+    
+    caffe.set_mode_cpu()
+    PNet = caffe.Net(caffe_model_path+"/det1.prototxt", caffe_model_path+"/det1.caffemodel", caffe.TEST)
+    RNet = caffe.Net(caffe_model_path+"/det2.prototxt", caffe_model_path+"/det2.caffemodel", caffe.TEST)
+    ONet = caffe.Net(caffe_model_path+"/det3.prototxt", caffe_model_path+"/det3.caffemodel", caffe.TEST)
+    align = AlignDlib('./shape_predictor_68_face_landmarks.dat')
+    cap = cv2.VideoCapture(0)
+    start = time()
+
+    img_matlab = img.copy()
+    tmp = img_matlab[:,:,2].copy()
+    img_matlab[:,:,2] = img_matlab[:,:,0]
+    img_matlab[:,:,0] = tmp #BGR TO RGB
+        # check rgb position
+    tic()
+    boundingboxes, points = detect_face(img_matlab, minsize, PNet, RNet, ONet, threshold, False, factor)
+    toc()
+        
+    if len(boundingboxes) == 1:
+        left    =int(boundingboxes[0][0])
+        top     =int(boundingboxes[0][1])
+        right   =int(boundingboxes[0][2])
+        bottom  =int(boundingboxes[0][3])
+        alignedFace=align.align(
+            96,   # 96x96x3
+            img_matlab,
+            dlib.rectangle(left,top,right,bottom),
+            landmarkIndices=AlignDlib.OUTER_EYES_AND_NOSE)
+        return alignedFace
+
+
+img = cv2.imread("./15-FaceId-1.jpg")
+crop_image = crop_align_image(img)
+cv2.imshow("Image", crop_image)
+cv2.waitKey (0)  
+
