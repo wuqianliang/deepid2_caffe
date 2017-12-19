@@ -574,11 +574,11 @@ def main():
         tmp = img_matlab[:,:,2].copy()
         img_matlab[:,:,2] = img_matlab[:,:,0]
         img_matlab[:,:,0] = tmp #BGR TO RGB
-
+        print 'img_matlab shape',img_matlab.shape
         # check rgb position
         tic()
         boundingboxes, points = detect_face(img_matlab, minsize, PNet, RNet, ONet, threshold, False, factor)
-        print(len(boundingboxes))
+        print 'boundingboxes shape',len(boundingboxes)
         toc()
 
         for i in range(len(boundingboxes)):
@@ -601,6 +601,7 @@ def main():
                     img_matlab,
                     dlib.rectangle(left,top,right,bottom),
                     landmarkIndices=AlignDlib.OUTER_EYES_AND_NOSE))
+            print alignedFaces[0].shape
             cv2.imshow('cropped and alignment detected face',cropped)
                            
 
