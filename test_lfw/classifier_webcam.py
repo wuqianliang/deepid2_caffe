@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python
 #
 # Example to run classifier on webcam stream.
 # Brandon Amos & Vijayenthiran
@@ -25,6 +25,7 @@
 # ./demo/classifier_webcam.py <path-to-your-classifier>
 
 
+from mtcnn import *
 import time
 
 start = time.time()
@@ -39,6 +40,7 @@ import numpy as np
 np.set_printoptions(precision=2)
 from sklearn.mixture import GMM
 import openface
+import dlib
 
 fileDir = os.path.dirname(os.path.realpath(__file__))
 modelDir = os.path.join(fileDir, '..', 'models')
@@ -64,23 +66,42 @@ def getRep(bgrImg):
     # bb = align.getLargestFaceBoundingBox(rgbImg) #Bounding box
 
     # Get all bounding boxes
-    bb = align.getAllFaceBoundingBoxes(rgbImg)
+    #bb = align.getAllFaceBoundingBoxes(rgbImg)
 
+    #######################################mtcnn#########################################
+    #'''
+    img_matlab = np.copy(bgrImg)
+    img=np.copy(img_matlab)
+    tmp = img_matlab[:,:,2].copy()
+    img_matlab[:,:,2] = img_matlab[:,:,0]
+    img_matlab[:,:,0] = tmp
+
+    # check rgb position
+    tic()
+    bb, points = detect_face(img_matlab, minsize, PNet, RNet, ONet, threshold, False, factor)
+    toc()
+    #'''
+    #################################################3333333333333333333333333333333333333
+    print 'bb length:',len(bb)
     if bb is None:
-        # raise Exception("Unable to find a face: {}".format(imgPath))
+        raise Exception("Unable to find a face: {}".format(imgPath))
         return None
     if args.verbose:
         print("Face detection took {} seconds.".format(time.time() - start))
 
     start = time.time()
-
     alignedFaces = []
     for box in bb:
+        # here box is numpy.ndarray  need transformed to dlib.dlib.rectangle
+        left    =int(box[0])
+        top     =int(box[1])
+        right   =int(box[2])
+        bottom  =int(box[3])
         alignedFaces.append(
             align.align(
                 args.imgDim,
                 rgbImg,
-                box,
+                dlib.rectangle(left,top,right,bottom),
                 landmarkIndices=openface.AlignDlib.OUTER_EYES_AND_NOSE))
 
     if alignedFaces is None:
@@ -89,7 +110,6 @@ def getRep(bgrImg):
         print("Alignment took {} seconds.".format(time.time() - start))
 
     start = time.time()
-
     reps = []
     for alignedFace in alignedFaces:
         reps.append(net.forward(alignedFace))
@@ -118,10 +138,10 @@ def infer(img, args):
         except:
             print ("No Face detected")
             return (None, None)
-        start = time.time()
         predictions = clf.predict_proba(rep).ravel()
         # print (predictions)
         maxI = np.argmax(predictions)
+	print(maxI)
         # max2 = np.argsort(predictions)[-3:][::-1][1]
         persons.append(le.inverse_transform(maxI))
         # print (str(le.inverse_transform(max2)) + ": "+str( predictions [max2]))
@@ -175,18 +195,36 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     align = openface.AlignDlib(args.dlibFacePredictor)
+    print(args.cuda)
     net = openface.TorchNeuralNet(
         args.networkModel,
         imgDim=args.imgDim,
         cuda=args.cuda)
 
+    ###########################load mtcnn face detect model########################
+    minsize = 20
+
+    caffe_model_path = "./model"
+
+    threshold = [0.6, 0.7, 0.7]
+    factor = 0.709
+    
+    caffe.set_mode_gpu()
+    PNet = caffe.Net(caffe_model_path+"/det1.prototxt", caffe_model_path+"/det1.caffemodel", caffe.TEST)
+    RNet = caffe.Net(caffe_model_path+"/det2.prototxt", caffe_model_path+"/det2.caffemodel", caffe.TEST)
+    ONet = caffe.Net(caffe_model_path+"/det3.prototxt", caffe_model_path+"/det3.caffemodel", caffe.TEST)
+
+    #############################################################################3
+
+
     # Capture device. Usually 0 will be webcam and 1 will be usb cam.
-    video_capture = cv2.VideoCapture(args.captureDevice)
-    video_capture.set(3, args.width)
-    video_capture.set(4, args.height)
+    video_capture = cv2.VideoCapture(1)#cv2.VideoCapture('test.mp4')
+    #video_capture.set(3, args.width)
+    #video_capture.set(4, args.height)
 
     confidenceList = []
     while True:
+
         ret, frame = video_capture.read()
         persons, confidences = infer(frame, args)
         print ("P: " + str(persons) + " C: " + str(confidences))
@@ -202,11 +240,9 @@ if __name__ == '__main__':
             if c <= args.threshold:  # 0.5 is kept as threshold for known face.
                 persons[i] = "_unknown"
 
-                # Print the person name and conf value on the frame
-        cv2.putText(frame, "P: {} C: {}".format(persons, confidences),
-                    (50, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1)
-        cv2.imshow('', frame)
+        cv2.putText(frame, "P: {} C: {}".format(persons, confidences),(50, 50), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 255, 255), 1) 
         # quit the program on the press of key 'q'
+        cv2.imshow('s',frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break
     # When everything is done, release the capture

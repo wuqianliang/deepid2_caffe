@@ -580,29 +580,23 @@ def main():
         boundingboxes, points = detect_face(img_matlab, minsize, PNet, RNet, ONet, threshold, False, factor)
         print 'boundingboxes shape',len(boundingboxes)
         toc()
-
+        
         for i in range(len(boundingboxes)):
-        #    x1 = boxes[:,0]
-        #    y1 = boxes[:,1]
-        #    x2 = boxes[:,2]
-        #    y2 = boxes[:,3]
             #cv2.rectangle(im, (int(x1[i]), int(y1[i])), (int(x2[i]), int(y2[i])), (0,255,0), 1)
-            cv2.rectangle(img, (int(boundingboxes[i][0]), int(boundingboxes[i][1])), (int(boundingboxes[i][2]), int(boundingboxes[i][3])), (0,255,0), 1)    
-            cropped = img[int(boundingboxes[i][1]):int(boundingboxes[i][3]),int(boundingboxes[i][0]):int(boundingboxes[i][2]),:]
-            cropped = cv2.resize(cropped, (96, 96), interpolation=cv2.INTER_CUBIC )
+            #cv2.rectangle(img, (int(boundingboxes[i][0]), int(boundingboxes[i][1])), (int(boundingboxes[i][2]), int(boundingboxes[i][3])), (0,255,0), 1)    
+            #cropped = img[int(boundingboxes[i][1]):int(boundingboxes[i][3]),int(boundingboxes[i][0]):int(boundingboxes[i][2]),:]
+            #cropped = cv2.resize(cropped, (96, 96), interpolation=cv2.INTER_CUBIC )
             left    =int(boundingboxes[i][0])
             top     =int(boundingboxes[i][1])
             right   =int(boundingboxes[i][2])
             bottom  =int(boundingboxes[i][3])
-            alignedFaces=[]
-            alignedFaces.append(
-                    align.align(
+            alignedFace=align.align(
                     96,
                     img_matlab,
                     dlib.rectangle(left,top,right,bottom),
-                    landmarkIndices=AlignDlib.OUTER_EYES_AND_NOSE))
-            print alignedFaces[0].shape
-            cv2.imshow('cropped and alignment detected face',cropped)
-                           
+                    landmarkIndices=AlignDlib.OUTER_EYES_AND_NOSE)
+            cv2.imshow('cropped and alignment detected face',alignedFace)
+            if cv2.waitKey(1) & 0xFF == ord('q'):
+                break
 
 main()
