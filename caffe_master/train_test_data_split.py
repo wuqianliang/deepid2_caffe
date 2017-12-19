@@ -4,8 +4,9 @@
 import os
 import sys
 sys.path.append("../test_lfw/")
-import fr_wuqianliang
+from fr_wuqianliang import *
 import random
+import cv2
 
 def walk_through_folder_for_split(src_folder):
     test_set  = []
@@ -19,9 +20,14 @@ def walk_through_folder_for_split(src_folder):
         for img_file in img_files:
             img_path = people_folder+'/' + img_file
             #########################################################
+            print people_path+'/'+img_file
+            img = cv2.imread(people_path+'/'+img_file)
+            crop_image = crop_align_image(img)
+            if crop_image is not None:
+                cv2.imwrite(people_path+'/'+img_file, crop_image);
             
             #########################################################
-            people_imgs.append((img_path, label))
+                people_imgs.append((img_path, label))
 
         if len(people_imgs) < 10:
             continue
