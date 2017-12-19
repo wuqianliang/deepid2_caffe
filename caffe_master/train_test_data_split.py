@@ -3,6 +3,8 @@
 
 import os
 import sys
+sys.path.append("../test_lfw/")
+import fr_wuqianliang
 import random
 
 def walk_through_folder_for_split(src_folder):
@@ -16,6 +18,9 @@ def walk_through_folder_for_split(src_folder):
         people_imgs = []
         for img_file in img_files:
             img_path = people_folder+'/' + img_file
+            #########################################################
+            
+            #########################################################
             people_imgs.append((img_path, label))
 
         if len(people_imgs) < 10:
