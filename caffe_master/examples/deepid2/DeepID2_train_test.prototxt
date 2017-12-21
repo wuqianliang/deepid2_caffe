@@ -89,9 +89,21 @@ filler: {
 }
 
 layer {
+  name: "norm1_1"
+  type: "LRN"
+  bottom: "conv1"
+  top: "norm1_1"
+  lrn_param {
+    local_size: 5
+    alpha: 0.0001
+    beta: 0.75
+  }
+}
+
+layer {
   name: "pool1"
   type: "Pooling"
-  bottom: "conv1"
+  bottom: "norm1_1"
   top: "pool1"
   pooling_param {
     pool: MAX
@@ -141,10 +153,25 @@ filler: {
     channel_shared: false 
 } 
 }
+
+
+layer {
+  name: "norm1_2"
+  type: "LRN"
+  bottom: "conv2"
+  top: "norm1_2"
+  lrn_param {
+    local_size: 5
+    alpha: 0.0001
+    beta: 0.75
+  }
+}
+
+
 layer {
   name: "pool2"
   type: "Pooling"
-  bottom: "conv2"
+  bottom: "norm1_2"
   top: "pool2"
   pooling_param {
     pool: MAX
@@ -190,9 +217,22 @@ layer {
 }
 
 layer {
+  name: "norm1_3"
+  type: "LRN"
+  bottom: "conv3"
+  top: "norm1_3"
+  lrn_param {
+    local_size: 5
+    alpha: 0.0001
+    beta: 0.75
+  }
+}
+
+
+layer {
   name: "pool3"
   type: "Pooling"
-  bottom: "conv3"
+  bottom: "norm1_3"
   top: "pool3"
   pooling_param {
     pool: MAX
@@ -394,4 +434,3 @@ layer {
     phase: TEST
   }
 }
-
