@@ -2,6 +2,15 @@ import base64
 import struct
 import os
 import sys
+sys.path.append("../test_lfw/")
+from fr_wuqianliang import *
+
+clean_list = {}
+file_object = open('MS-Celeb-1M_clean_list.txt', 'r')
+for line in file_object:
+    arr=line.split(' ')
+    clean_list[arr[0]]=1
+
 
 def readline(line):
     MID,ImageSearchRank,ImageURL,PageURL,FaceID,FaceRectangle,FaceData=line.split("\t")
@@ -21,8 +30,11 @@ def unpack(filename,target="img"):
             if not os.path.exists(img_dir):
                 os.mkdir(img_dir)
             img_name="%s-%s"%(ImageSearchRank,FaceID)+".jpg"
-            writeImage(os.path.join(img_dir,img_name),FaceData)
-            i+=1
+            crop_image = crop_align_image(FaceData)
+            if clean_list.has_key(img_dir+'/'+img_name) and crop_image is not None:
+                writeImage(os.path.join(img_dir,img_name),FaceData)
+                print('Processed image:',img_dir+'/'+img_name)
+                i+=1
             if i%1000==0:
                 print(i,"imgs finished")
     print("all finished")    
