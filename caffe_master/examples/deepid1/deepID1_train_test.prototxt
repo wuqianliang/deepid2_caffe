@@ -1,5 +1,5 @@
 #############################  DATA Layer  #############################
-name: "face_train_val"
+name: "DeepID1"
 layer {
   top: "data_1"
   top: "label_1"
