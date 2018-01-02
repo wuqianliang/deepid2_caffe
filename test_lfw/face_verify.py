@@ -110,14 +110,10 @@ if __name__ == '__main__':
     while True:
 
         ret, img = cap.read()
-        #img_matlab = img.copy()
-        #tmp = img_matlab[:,:,2].copy()
-        #img_matlab[:,:,2] = img_matlab[:,:,0]
-        #img_matlab[:,:,0] = tmp #BGR TO RGB
+
         feature_cam_face_crop_align = get_feature_crop_align_cam(img,mean_npy)
         if feature_cam_face_crop_align is not None:
             for k in feature_arr:
-#                print feature_arr[k]
                 result = compare_pic(feature_cam_face_crop_align,feature_arr[k]);
                 print k,result
                 if result >= thershold:
