@@ -17,7 +17,7 @@ import math
 caffe.set_mode_gpu();
 
 global net;
-net = caffe.Classifier('DeepID2_deploy.prototxt', 'deepid2_iter_30000.caffemodel');
+net = caffe.Classifier('deepID1_deploy.prototxt', 'snapshot_iter_6099296.caffemodel');
 
 def compare_pic(feature1, feature2):
     predicts = pw.cosine_similarity(feature1, feature2);
@@ -30,8 +30,8 @@ def get_feature(path, mean_blob):
     # test_num = np.shape(X)[0];
     # print test_num;
     out = net.forward_all(data = X);
-    feature = np.float64(out['fc160']);
-    feature = np.reshape(feature, (1, 160));
+    feature = np.float64(out['deepid_1']);
+    feature = np.reshape(feature, (1, 256));
     return feature;
 
 def read_image(filepath, mean_blob):
@@ -52,8 +52,8 @@ def read_image(filepath, mean_blob):
 if __name__ == '__main__':
     thershold = 0.85;
     TEST_SUM = 6000;
-    DATA_BASE = "/home/arthur/caffe-master/data/lfw/";
-    MEAN_FILE = 'DeepID2_mean.proto';
+    DATA_BASE = "/home/arthur/caffe-master/data/lfw-aligned/";
+    MEAN_FILE = 'DeepID1_mean.proto';
     POSITIVE_TEST_FILE = "positive_pairs_path.txt";
     NEGATIVE_TEST_FILE = "negative_pairs_path.txt";
     
@@ -79,33 +79,35 @@ if __name__ == '__main__':
         for index in range(len(PositiveDataList)):
             filepath_1 = PositiveDataList[index].split(' ')[0];
             filepath_2 = PositiveDataList[index].split(' ')[1][:-2];
-            feature_1 = get_feature(DATA_BASE + filepath_1, mean_npy);
-            feature_2 = get_feature(DATA_BASE + filepath_2, mean_npy);
-            result = compare_pic(feature_1, feature_2);
-            if result >= thershold:
-                #  print 'Same Guy\n\n'
-                True_Positive += 1;
-            else:
-                #  wrong
-                False_Positive += 1;
+            if os.path.exists(DATA_BASE + filepath_1) and os.path.exists(DATA_BASE + filepath_2):
+                feature_1 = get_feature(DATA_BASE + filepath_1, mean_npy);
+                feature_2 = get_feature(DATA_BASE + filepath_2, mean_npy);
+                result = compare_pic(feature_1, feature_2);
+                if result >= thershold:
+                    print 'Same Guy'
+                    True_Positive += 1;
+                else:
+                    print 'Wrong guy'
+                    print filepath_1,filepath_2
+                    False_Positive += 1;
                 
         for index in range(len(NegativeDataList)):
             filepath_1 = NegativeDataList[index].split(' ')[0];
             filepath_2 = NegativeDataList[index].split(' ')[1][:-2];
-            feature_1 = get_feature(DATA_BASE + filepath_1, mean_npy);
-            feature_2 = get_feature(DATA_BASE + filepath_2, mean_npy);
-
-            result = compare_pic(feature_1, feature_2);
-            if result >= thershold:
-                print 'Wrong Guy\n'
-                print filepath_1,filepath_2
+            if os.path.exists(DATA_BASE + filepath_1) and os.path.exists(DATA_BASE + filepath_2):
+                feature_1 = get_feature(DATA_BASE + filepath_1, mean_npy);
+                feature_2 = get_feature(DATA_BASE + filepath_2, mean_npy);
+            
+                result = compare_pic(feature_1, feature_2);
+                if result >= thershold:
+                    print 'Wrong Guy'
+                    print filepath_1,filepath_2
                 #  wrong
-                False_Negative += 1;
-            else:
+                    False_Negative += 1;
+                else:
                 #  correct
-                print 'Correct\n'
-                print filepath_1,filepath_2
-                True_Negative += 1; 
+                    print 'Correct'
+                    True_Negative += 1; 
 
         print "thershold: " + str(thershold);
         print "Accuracy: " + str(float(True_Positive + True_Negative)/TEST_SUM) + " %";

@@ -485,7 +485,7 @@ def detect_face(img, minsize, PNet, RNet, ONet, threshold, fastresize, factor):
     
 def initFaceDetector():
     minsize = 20
-    caffe_model_path = "/media/arthur/work/smart_card_snd/deepid2_wuqianliang/deepid2_caffe.git/trunk/test_lfw/mtcnn_model"
+    caffe_model_path = "/home/arthur/deepid2_caffe.git/trunk/test_lfw/mtcnn_model"
     threshold = [0.6, 0.7, 0.7]
     factor = 0.709
     caffe.set_mode_cpu()
@@ -553,7 +553,7 @@ def crop_align_cam():
 
     minsize = 20
 
-    caffe_model_path = "/media/arthur/work/smart_card_snd/deepid2_wuqianliang/deepid2_caffe.git/trunk/test_lfw/mtcnn_model"
+    caffe_model_path = "/home/arthur/deepid2_caffe.git/trunk/test_lfw/mtcnn_model"
 
     threshold = [0.6, 0.7, 0.7]
     factor = 0.709
@@ -594,7 +594,7 @@ def crop_align_cam():
 
 minsize = 20
 
-caffe_model_path = "/media/arthur/work/smart_card_snd/deepid2_wuqianliang/deepid2_caffe.git/trunk/test_lfw/mtcnn_model"
+caffe_model_path = "/home/arthur/deepid2_caffe.git/trunk/test_lfw/mtcnn_model"
 
 threshold = [0.6, 0.7, 0.7]
 factor = 0.709
@@ -603,7 +603,7 @@ caffe.set_mode_gpu()
 PNet = caffe.Net(caffe_model_path+"/det1.prototxt", caffe_model_path+"/det1.caffemodel", caffe.TEST)
 RNet = caffe.Net(caffe_model_path+"/det2.prototxt", caffe_model_path+"/det2.caffemodel", caffe.TEST)
 ONet = caffe.Net(caffe_model_path+"/det3.prototxt", caffe_model_path+"/det3.caffemodel", caffe.TEST)
-align = AlignDlib('/media/arthur/work/smart_card_snd/deepid2_wuqianliang/deepid2_caffe.git/trunk/test_lfw/shape_predictor_68_face_landmarks.dat')
+align = AlignDlib('/home/arthur/deepid2_caffe.git/trunk/test_lfw/shape_predictor_68_face_landmarks.dat')
 def crop_align_image(img):
 
     img_matlab = img.copy()
