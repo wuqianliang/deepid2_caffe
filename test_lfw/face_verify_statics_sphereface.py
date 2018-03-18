@@ -9,6 +9,7 @@ import skimage
 import sys
 import caffe
 import math
+import sklearn.metrics.pairwise as pw
 from fr_wuqianliang_sphereface import *
 from matlab_cp2tform import get_similarity_transform_for_cv2
 
@@ -67,6 +68,13 @@ def read_image(filepath):
     img = skimage.io.imread(filename, as_grey=False);
     
     return img;
+
+def get_feature_crop_align(filepath):
+
+    img =  read_image(testFile)
+    img=get_img_crop_align(img)
+    return get_feature(img)
+
 
 
 if __name__ == '__main__':
