@@ -20,15 +20,17 @@ net = caffe.Classifier('sphereface_deploy.prototxt', 'sphereface_model_iter_2800
 
 def get_img_crop_align(img):
 
+    #print "1",img.shape
     # get bbox and lamarks
     boundingboxes, points = get_bbox_and_landmarks(img)
     if len(boundingboxes) == 1:
         landmark = points[0]
 #        print landmark
         landmark = [int(landmark[0]),int(landmark[5]),int(landmark[1]),int(landmark[6]),int(landmark[2]),int(landmark[7]),int(landmark[3]),int(landmark[8]),int(landmark[4]),int(landmark[9])]
-#	print landmark        
+#	print landmark       
+    #	print "2",img.shape
     	img_align_and_crop = alignment(img,landmark)
-
+    #    print "img_align_and_crop",img_align_and_crop.shape
     	img_align_and_crop = img_align_and_crop.transpose(2, 0, 1).reshape((1,3,112,96))
     	img_align_and_crop = (img_align_and_crop-127.5)/128.0
     	return img_align_and_crop
@@ -57,6 +59,7 @@ def alignment(src_img,src_pts):
     r = np.array(ref_pts).astype(np.float32)
 
     tfm = get_similarity_transform_for_cv2(s, r)
+
     face_img = cv2.warpAffine(src_img, tfm, crop_size)
     return face_img
 
@@ -71,9 +74,12 @@ def read_image(filepath):
 
 def get_feature_crop_align(filepath):
 
-    img =  read_image(testFile)
-    img=get_img_crop_align(img)
-    return get_feature(img)
+    img1= read_image(filepath)
+    img2=get_img_crop_align(img1)
+    if img2 is None:
+        print filepath,"==============="
+	return None
+    return get_feature(img2)
 
 
 
@@ -83,50 +89,35 @@ if __name__ == '__main__':
    
     TEST_BASE = "./snd_id_photo"; 
     
-    testFile = "/home/arthur/sphereface/preprocess/data/lfw/Zinedine_Zidane/Zinedine_Zidane_0001.jpg"; 
-    img =  read_image(testFile)
+    #testFile = "/home/arthur/sphereface/preprocess/data/lfw/Zinedine_Zidane/Zinedine_Zidane_0001.jpg"; 
+    #img =  read_image(testFile)
     #print "orginal shape ",img.shape
-    img_align = get_img_crop_align(img)
-    feature = get_feature(img_align)
-    print feature
-
+    #img_align = get_img_crop_align(img)
+    #feature = get_feature(img_align)
+    #print feature
     # read pic and name
     feature_arr = {}
     for people_path in os.listdir(TEST_BASE):
         ppath = os.path.join(TEST_BASE,people_path)
         for img_name in os.listdir(ppath):
             if img_name == people_path+'.jpg':
-
                 feat = get_feature_crop_align(os.path.join(ppath,img_name))
                 if feat is not None:
+        #            print feat
                     feature_arr[people_path]=feat
-
     for people_path in os.listdir(TEST_BASE):
         ppath = os.path.join(TEST_BASE,people_path)
         for img_name in os.listdir(ppath):
             if img_name is not people_path+'.jpg':
-                feat = get_feature_crop_align(os.path.join(ppath,img_name)) 
+                print os.path.join(ppath,img_name)
+                feat = get_feature_crop_align(os.path.join(ppath,img_name))
                 if feat is not None:
-                    max_k = ""
-                    max_like = 0.0
                     for k in feature_arr:
-                        result = compare_pic(feat,feature_arr[k])
-                        if result[0][0] > max_like:
-                            max_k = k
-                            max_like = result[0][0]
-                    print people_path+','+img_name+','+max_k+','+str(max_like)
-    '''
-    cap = cv2.VideoCapture(0)
-    start = time()
-    while True:
+			f1 = np.array(feat[0])
+ 			f2=np.array(feature_arr[k][0])
 
-        ret, img = cap.read()
-
-        feature_cam_face_crop_align = get_feature_crop_align_cam(img)
-        if feature_cam_face_crop_align is not None:
-            for k in feature_arr:
-                result = compare_pic(feature_cam_face_crop_align,feature_arr[k]);
-                print k,result
-                if result >= thershold:
-                    print 'Found person:',k
-    '''
+                        #print f1,f2
+                        lx = np.sqrt(f1.dot(f1))
+			ly = np.sqrt(f2.dot(f2))
+			cos =f1.dot(f2)/(lx*ly)
+                    	print os.path.join(ppath,img_name)+','+k+','+str(cos)
