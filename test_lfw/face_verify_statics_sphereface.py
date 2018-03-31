@@ -18,17 +18,31 @@ from matlab_cp2tform import get_similarity_transform_for_cv2
 global net;
 net = caffe.Classifier('sphereface_deploy.prototxt', 'sphereface_model_iter_28000.caffemodel');
 
+def getface(im, boxes):
+    constImgfile = "./tmp"
+    for i in range(len(boxes)):
+        cv2.rectangle(im, (int(boxes[i][0]), int(boxes[i][1])), (int(boxes[i][2]), int(boxes[i][3])), (0,255,0), 1)    
+        cropped = im[int(boxes[i][1]):int(boxes[i][3]),int(boxes[i][0]):int(boxes[i][2]),:]
+            
+        #cropped = cv2.resize(cropped, (96, 96), interpolation=cv2.INTER_CUBIC )
+        img=cropped
+    	    
+    	#cv2.imshow('src',img)
+
 def get_img_crop_align(img):
 
     #print "1",img.shape
     # get bbox and lamarks
     boundingboxes, points = get_bbox_and_landmarks(img)
+    if len(boundingboxes) == 0:
+        print 'len(boundingboxes) == 0'
+	return None
     if len(boundingboxes) == 1:
         landmark = points[0]
-#        print landmark
+        #print landmark
         landmark = [int(landmark[0]),int(landmark[5]),int(landmark[1]),int(landmark[6]),int(landmark[2]),int(landmark[7]),int(landmark[3]),int(landmark[8]),int(landmark[4]),int(landmark[9])]
 #	print landmark       
-    #	print "2",img.shape
+    	#print "2",img.shaped
     	img_align_and_crop = alignment(img,landmark)
     #    print "img_align_and_crop",img_align_and_crop.shape
     	img_align_and_crop = img_align_and_crop.transpose(2, 0, 1).reshape((1,3,112,96))
@@ -69,19 +83,23 @@ def read_image(filepath):
     filename = filepath.split('\n');
     filename = filename[0];
     img = skimage.io.imread(filename, as_grey=False);
-    
     return img;
 
 def get_feature_crop_align(filepath):
 
     img1= read_image(filepath)
-    img2=get_img_crop_align(img1)
-    if img2 is None:
+    img11 = img1.copy() 
+    img1_flip  = cv2.flip(img11,1)
+    img2 = get_img_crop_align(img1)
+    img2_flip = get_img_crop_align(img1_flip) 
+    if img2 is None or img2_flip is None:
         print filepath,"==============="
 	return None
-    return get_feature(img2)
+    feat= get_feature(img2)
+    feat_flip= get_feature(img2_flip)
+    return np.concatenate((feat,feat_flip))
 
-
+'''
 
 if __name__ == '__main__':
     thershold = 0.85;
@@ -121,3 +139,4 @@ if __name__ == '__main__':
 			ly = np.sqrt(f2.dot(f2))
 			cos =f1.dot(f2)/(lx*ly)
                     	print os.path.join(ppath,img_name)+','+k+','+str(cos)
+'''
